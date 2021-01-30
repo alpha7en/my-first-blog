@@ -1,0 +1,25 @@
+[core]
+        editor = vim
+        pager = less
+
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        interactive = auto
+        pager = true
+        ui = auto
+
+[alias]
+        hist = log --graph --oneline --decorate
+        st = status
+
+[push]
+	default = simple
+[crtdential]
+	helper = cache --timeout=604800
+[credential]
+	helper = cache --timeout=604800
+[user]
+	email = chuklanov.pavel@gmail.com
+	name = alpha7en
