@@ -14,7 +14,19 @@ btn_blue = InlineKeyboardButton("🟦", callback_data='c#0000FF')
 
 c_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).row(btn_black, btn_wight, btn_green, btn_yellow, btn_red, btn_blue)
 
-l1= InlineKeyboardButton("в рамке", callback_data='l1')
-l2= InlineKeyboardButton("с фильтром", callback_data='l2')
+l1= InlineKeyboardButton("в чёрной рамке", callback_data='l1')
+l2= InlineKeyboardButton("с рандомным фильтром", callback_data='l2')
+l3= InlineKeyboardButton("пикселизация", callback_data='l3')
+l4= InlineKeyboardButton("trigered", callback_data='l4')
+l5= InlineKeyboardButton("2 строки", callback_data='l5')
+l6= InlineKeyboardButton("moshu", callback_data='l6')
 
-l_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).row(l1,l2)
+l_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(l1,l3).add(l2).add(l4).add(l5, l6)
+
+
+
+m1= InlineKeyboardButton("слева", callback_data='m1')
+m2= InlineKeyboardButton("справа", callback_data='m2')
+
+moshu_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(m1,m2)
+

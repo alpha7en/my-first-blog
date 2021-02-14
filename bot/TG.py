@@ -1,9 +1,13 @@
 import config
+import moshu_generator as mg
+import trigered as tr
+import pixelate
 import blackFON
 import filterPIL
 import os
 import draw
 import keyboards as kb
+import lines
 from aiogram import Bot, Dispatcher, executor, types
 import logging
 from sqlitecontrol import Sqlitecontrol
@@ -24,11 +28,16 @@ async def process_callback_bt_cool(callback_query: types.CallbackQuery):
         code = int(code)
     if db.obr_get(callback_query.from_user.id)==1:
         if code == 1:
+
+
             markup1 = types.ReplyKeyboardRemove()
             await bot.send_message(callback_query.from_user.id, 'Нажата крутая кнопка!')
             db.obr_set(callback_query.from_user.id, 0)
             db.like_set(callback_query.from_user.id, 1)
         elif code == 2:
+
+
+
             markup1 = types.ReplyKeyboardRemove()
             await bot.send_message(callback_query.from_user.id, 'Нажата грустная кнопка!')
             db.obr_set(callback_query.from_user.id, 0)
@@ -45,6 +54,8 @@ async def process_callback_l(callback_query: types.CallbackQuery):
     code = callback_query.data[1:]
     await bot.answer_callback_query(callback_query.id)
     if db.status_get(callback_query.from_user.id) == 2:
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
+
         markup1 = types.ReplyKeyboardRemove()
         db.status_set(callback_query.from_user.id, 3)
         db.set_args(callback_query.from_user.id, 1, code)
@@ -57,6 +68,10 @@ async def process_callback_l(callback_query: types.CallbackQuery):
         db.obr_set(callback_query.from_user.id, 1)
         os.remove(str(callback_query.from_user.id) + '.jpg')
         # await bot.send_photo(message.from_user.id, im)
+    elif(db.status_get(callback_query.from_user.id) == 30):
+        db.set_args(callback_query.from_user.id, 1, code)
+        await bot.send_message(callback_query.from_user.id, "введи текст верхней строки 👽")
+        db.status_set(callback_query.from_user.id, 31)
     else:
         await bot.send_message(callback_query.from_user.id, 'Асуждаю ненужные нажатия!')
 
@@ -70,9 +85,45 @@ async def process_callback_c(callback_query: types.CallbackQuery):
     elif code == '1':
         await bot.send_message(callback_query.from_user.id, "введи слово")
         db.status_set(callback_query.from_user.id, 10)
+    elif code == '3':
+        await bot.send_message(callback_query.from_user.id, "введи степень пикселизации (попробуй 16) 🦍")
+        db.status_set(callback_query.from_user.id, 20)
+    elif code == '4':
+        tr.r(str(callback_query.from_user.id) + '.jpg')
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
+    elif code == '5':
+        db.status_set(callback_query.from_user.id, 30)
+        await bot.send_message(callback_query.from_user.id, 'какой цвет подписи?', reply_markup=kb.c_kb)
+    elif code == '6':
+        await bot.send_message(callback_query.from_user.id, 'слева или справа?', reply_markup=kb.moshu_kb)
+
 
 
     #await bot.edit_message_reply_markup(callback_query.id, message_id = callback_query.message.message_id-1, reply_markup = '')
+
+
+@dp.callback_query_handler(lambda c: c.data and c.data.startswith('m'))
+async def process_callback_c(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    code = callback_query.data[1:]
+    if code == '1':
+        mg.r(str(callback_query.from_user.id) + '.jpg', True)
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
+    else:
+        mg.r(str(callback_query.from_user.id) + '.jpg')
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
@@ -81,9 +132,14 @@ async def start(message: types.Message):
             _italic text_
             [text](URL)
             """
-    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы _без всяких усилий._\n напиши мне своё имя для подписи.\n вот так: /set_name имя \nЗатем можете отправлять своё фото для мема\n напиши /my_rate для просмотра ваше рейтинга _оценки_ моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
+    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы *без всяких усилий.*\n напиши мне своё имя для подписи.\n вот так: setname (имя)\n Затем можете отправлять своё фото для мема и выбирать режимы\n напиши /myrate для просмотра ваше рейтинга *оценки* моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
 
-@dp.message_handler(commands=['my_rate'])
+@dp.message_handler(commands=['printfall'])
+async def start(message: types.Message):
+    await message.answer(db.printf())
+
+
+@dp.message_handler(commands=['myrate'])
 async def my_rate(message: types.Message):
     markdown = """
         *bold text*
@@ -99,9 +155,9 @@ async def help(message: types.Message):
                 _italic text_
                 [text](URL)
                 """
-    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы _без всяких усилий._\n напиши мне своё имя для подписи.\n вот так: /set_name\n Затем можете отправлять своё фото для мема\n напиши /my_rate для просмотра ваше рейтинга _оценки_ моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
+    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы _без всяких усилий._\n напиши мне своё имя для подписи.\n вот так: /setname (имя) \nЗатем можете отправлять своё фото для мема\n напиши /myrate для просмотра ваше рейтинга _оценки_ моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
 
-@dp.message_handler(commands=['set_name'])
+@dp.message_handler(commands=['setname'])
 async def set_name(message: types.Message):
     print(message.from_user['id'])
     print(message.get_args())
@@ -115,18 +171,36 @@ async def set_name(message: types.Message):
 
 @dp.message_handler(content_types=['photo'])
 async def photoes(message):
-    await message.photo[-1].download(str(message.from_user['id'])+'.jpg')
-    await message.answer("выбери режим:", reply_markup=kb.l_kb)
+    if(db.exists(message.from_user['id']) == None):
+        await message.answer("АСУЖДАЮ, может имя введешь? \n setname (имя)")
+    else:
+        try:
+            os.remove(str(callback_query.from_user.id) + '.jpg')
+        except:
+            pass
+        await message.photo[-1].download(str(message.from_user['id'])+'.jpg')
+        message_info = await message.answer("выбери режим:", reply_markup=kb.l_kb)
+        db.set_args(message.from_user['id'], 3, message_info['message_id'])
 
 @dp.message_handler(content_types=['text'])
 async def all_mess(message):
     if db.status_get(message.from_user['id']) == 1:
         try:
             it = int(message.text)
-            await bot.send_message(message.from_user['id'], 'какой цвет подписи?', reply_markup=kb.c_kb)
-            db.status_set(message.from_user['id'], 2)
+            if it != 0:
+                await bot.send_message(message.from_user['id'], 'какой цвет подписи?', reply_markup=kb.c_kb)
+                db.status_set(message.from_user['id'], 2)
+                db.set_args(message.from_user['id'], 0,str(it))
+            else:
+                markup1 = types.ReplyKeyboardRemove()
+                db.status_set(message.from_user['id'], 3)
+                filterPIL.filter(str(message.from_user['id']) + '.jpg')
 
-            db.set_args(message.from_user['id'], 0,str(it))
+                f = open(str(message.from_user['id']) + '.jpg', "rb")
+                await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
+                await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
+                db.obr_set(message.from_user['id'], 1)
+                os.remove(str(message.from_user['id']) + '.jpg')
 
 
         except Exception as exc:
@@ -143,6 +217,35 @@ async def all_mess(message):
         await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(message.from_user['id'], 1)
 
+    if db.status_get(message.from_user['id']) == 20:
+        try:
+            it = int(message.text)
+            pixelate.r(str(message.from_user['id']) + '.jpg', it)
+            f = open(str(message.from_user['id']) + '.jpg', "rb")
+            await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
+            os.remove(str(message.from_user['id']) + '.jpg')
+            await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
+            db.obr_set(message.from_user['id'], 1)
+
+
+        except Exception as exc:
+            await bot.send_message(message.from_user['id'], 'асуждаю! Может нормальное ЧИСЛО введёшь ?')
+            print(exc)
+
+    if db.status_get(message.from_user['id']) == 31:
+        it = (message.text)
+        await bot.send_message(message.from_user['id'], 'теперь нижнюю строчку')
+        db.status_set(message.from_user['id'], 32)
+        db.set_args(message.from_user['id'], 0, str(it))
+        return
+    if db.status_get(message.from_user['id']) == 32:
+        it = (message.text)
+        lines.generate_meme(str(message.from_user['id']) + '.jpg', db.get_args(message.from_user['id'])[0], it,  db.get_args(message.from_user['id'])[1])
+        f = open(str(message.from_user['id']) + '.jpg', "rb")
+        await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
+        os.remove(str(message.from_user['id']) + '.jpg')
+        await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
+        db.obr_set(message.from_user['id'], 1)
 
 
 if __name__ == '__main__':

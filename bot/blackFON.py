@@ -8,13 +8,7 @@ def r(name, text):
     os.remove(name)
     width, height = osn.size
     print(width, height)
-    size = min(int((height)), int((width*0.9)/len(text)))
-
-<<<<<<< HEAD
-    print('size- ', size)
-=======
-    print(size, "  ---size)
->>>>>>> 4ce6c10e644ed5632b1e555ba21fc9517b1174a8
+    size = min(int((height*0.7)), int((width*1.8)/(len(text))))
     img = Image.new("RGBA", (int(width * 1.4), int(height * 1.7)))
 
     b = Image.new("RGBA", (int(width * 1.03), int(height * 1.03)), color=(0, 0, 0))
@@ -39,8 +33,9 @@ def r(name, text):
     im2.paste(w, (x,y), mask = w)
     draw = ImageDraw.Draw(im2)
     font = ImageFont.truetype('ofont.ru_Roboto.ttf', size=size)
+    wi = im2.size[0]
     l, h = draw.textsize(text, font=font)
-    draw.text((int(width/2 -l*0.1), int(height*1.35)), text+' ', font=font, fill=('#FFFFFF'))
+    draw.text((int(wi/2 -l*0.5), int(height*1.2)), text+' ', font=font, fill=('#FFFFFF'))
 
     im2.save(name)
 

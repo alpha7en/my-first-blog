@@ -89,6 +89,14 @@ class Sqlitecontrol:
     def close(self):
         """Закрываем соединение с БД"""
         self.connection.close()
+    def printf (self):
+        t = ''
+        self.cursor.execute("SELECT * FROM `users`")
+        rows = self.cursor.fetchall()
+
+        for row in rows:
+            t += ('\n' + str(row))
+        return (t)
 if __name__ == '__main__':
     new = Sqlitecontrol('TGBase.db')
     new.add_name("123", " kjk")
