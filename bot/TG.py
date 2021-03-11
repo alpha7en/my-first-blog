@@ -1,7 +1,10 @@
 import config
+import szg
 import moshu_generator as mg
 import trigered as tr
 import pixelate
+import iskaz
+import nalozg
 import blackFON
 import filterPIL
 import os
@@ -64,6 +67,7 @@ async def process_callback_l(callback_query: types.CallbackQuery):
         draw.dr((str(callback_query.from_user.id) + '.jpg'), db.get_name(callback_query.from_user.id), mas)
         f = open(str(callback_query.from_user.id) + '.jpg', "rb")
         await Bot.send_photo(self=bot, chat_id=callback_query.from_user.id, photo=f)
+
         await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(callback_query.from_user.id, 1)
         os.remove(str(callback_query.from_user.id) + '.jpg')
@@ -93,6 +97,7 @@ async def process_callback_c(callback_query: types.CallbackQuery):
         f = open(str(callback_query.from_user.id) + '.jpg', "rb")
         await bot.send_photo( callback_query.from_user.id, photo=f)
         os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
         await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(callback_query.from_user.id, 1)
     elif code == '5':
@@ -100,11 +105,44 @@ async def process_callback_c(callback_query: types.CallbackQuery):
         await bot.send_message(callback_query.from_user.id, 'какой цвет подписи?', reply_markup=kb.c_kb)
     elif code == '6':
         await bot.send_message(callback_query.from_user.id, 'слева или справа?', reply_markup=kb.moshu_kb)
-
+    elif code == '7':
+        iskaz.r(str(callback_query.from_user.id) + '.jpg')
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
+        await bot.send_message(callback_query.from_user.id, 'как по мне полный рофл, а тебе как?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
+    elif code == '8':
+        db.status_set(callback_query.from_user.id, 45)
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
+        await bot.send_message(callback_query.from_user.id, 'а что сверху?')
+    elif code == '9':
+        db.obr_set(callback_query.from_user.id, 50)
+        await bot.send_message(callback_query.from_user.id, 'kak delaem?', reply_markup=kb.szg_kb)
 
 
     #await bot.edit_message_reply_markup(callback_query.id, message_id = callback_query.message.message_id-1, reply_markup = '')
-
+@dp.callback_query_handler(lambda c: c.data and c.data.startswith('q'))
+async def szg_otvet(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    code = callback_query.data[1:]
+    if code == '1':
+        szg.r(str(callback_query.from_user.id) + '.jpg', 1)
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
+        await bot.send_message(callback_query.from_user.id, 'nycho?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
+    else:
+        szg.r(str(callback_query.from_user.id) + '.jpg', 2)
+        f = open(str(callback_query.from_user.id) + '.jpg', "rb")
+        await bot.send_photo( callback_query.from_user.id, photo=f)
+        os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
+        await bot.send_message(callback_query.from_user.id, 'nycho?', reply_markup=kb.greet_kb)
+        db.obr_set(callback_query.from_user.id, 1)
 
 @dp.callback_query_handler(lambda c: c.data and c.data.startswith('m'))
 async def process_callback_c(callback_query: types.CallbackQuery):
@@ -115,6 +153,7 @@ async def process_callback_c(callback_query: types.CallbackQuery):
         f = open(str(callback_query.from_user.id) + '.jpg', "rb")
         await bot.send_photo( callback_query.from_user.id, photo=f)
         os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
         await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(callback_query.from_user.id, 1)
     else:
@@ -122,6 +161,7 @@ async def process_callback_c(callback_query: types.CallbackQuery):
         f = open(str(callback_query.from_user.id) + '.jpg', "rb")
         await bot.send_photo( callback_query.from_user.id, photo=f)
         os.remove(str(callback_query.from_user.id) + '.jpg')
+        await bot.delete_message(callback_query.from_user.id, int(db.get_args(callback_query.from_user.id)[3]))
         await bot.send_message(callback_query.from_user.id, 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(callback_query.from_user.id, 1)
 
@@ -132,7 +172,7 @@ async def start(message: types.Message):
             _italic text_
             [text](URL)
             """
-    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы *без всяких усилий.*\n напиши мне своё имя для подписи.\n вот так: setname (имя)\n Затем можете отправлять своё фото для мема и выбирать режимы\n напиши /myrate для просмотра ваше рейтинга *оценки* моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
+    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы *без всяких усилий.*\n напиши мне своё имя для подписи.\n вот так: setname (имя)\n Затем можете отправлять своё фото для мема и выбирать режимы\n напиши /myrate для просмотра ваше рейтинга *оценки* моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw) \nнапиши /rename _(имя)_ и *смени* своё имя\n [написать мне](t.me/@Alpha7en)", parse_mode="Markdown")
 
 @dp.message_handler(commands=['printfall'])
 async def start(message: types.Message):
@@ -150,12 +190,34 @@ async def my_rate(message: types.Message):
 
 @dp.message_handler(commands=['help'])
 async def help(message: types.Message):
+    db.status_set(message.from_user['id'],0)
     markdown = """
                 *bold text*
                 _italic text_
                 [text](URL)
                 """
-    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы _без всяких усилий._\n напиши мне своё имя для подписи.\n вот так: /setname (имя) \nЗатем можете отправлять своё фото для мема\n напиши /myrate для просмотра ваше рейтинга _оценки_ моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw)", parse_mode="Markdown")
+    await message.answer("*Привет*. Я посмогу тебе создавать классные мемы _без всяких усилий._\n напиши мне своё имя для подписи.\n вот так: /setname (имя) \nЗатем можете отправлять своё фото для мема\n напиши /myrate для просмотра ваше рейтинга _оценки_ моей работы \n \n [мой канал](https://www.youtube.com/channel/UCMBxOvbDi8qN81yT8NmmeXw) \n [написать мне](t.me/@Alpha7en)", parse_mode="Markdown")
+
+
+@dp.message_handler(commands=['rename'])
+async def help(message: types.Message):
+    db.status_set(message.from_user['id'],0)
+    markdown = """
+                *bold text*
+                _italic text_
+                [text](URL)
+               """
+
+
+
+    if db.get_args(message.from_user['id'])[2] == '1':
+
+        db.set_name(tg_id=message.from_user['id'], name=message.get_args())
+        await message.answer("*zapomnil*", parse_mode="Markdown")
+    else:
+        await message.answer("*решил имечко сменить?* я загадал число _просто напиши мне его_ и сможешь менять имя", parse_mode="Markdown")
+        db.status_set(message.from_user['id'],39)
+
 
 @dp.message_handler(commands=['setname'])
 async def set_name(message: types.Message):
@@ -167,7 +229,7 @@ async def set_name(message: types.Message):
         db.add_name(tg_id=message.from_user['id'], name=message.get_args())
         await message.answer("я тебя запомню, можешь скинуть фото")
     else:
-        await message.answer("эммм, я тебя и так знаю")
+        await message.answer("эммм, я тебя и так знаю, но если хочешь сменить имя просто напиши /rename")
 
 @dp.message_handler(content_types=['photo'])
 async def photoes(message):
@@ -178,12 +240,31 @@ async def photoes(message):
             os.remove(str(callback_query.from_user.id) + '.jpg')
         except:
             pass
-        await message.photo[-1].download(str(message.from_user['id'])+'.jpg')
-        message_info = await message.answer("выбери режим:", reply_markup=kb.l_kb)
-        db.set_args(message.from_user['id'], 3, message_info['message_id'])
+        if db.status_get(message.from_user['id']) ==45:
+            await message.photo[-1].download(str(message.from_user['id'])+'v.jpg')
+            nalozg.r(str(message.from_user['id'])+'.jpg')
+            f = open(str(message.from_user['id']) + '.jpg', "rb")
+            await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
+            os.remove(str(message.from_user['id']) + '.jpg')
+            db.status_set(message.from_user['id'],0)
+            await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
+            db.obr_set(message.from_user['id'], 1)
+            db.status_set(message.from_user['id'],0)
+        else:
+            await message.photo[-1].download(str(message.from_user['id'])+'.jpg')
+            message_info = await message.answer("выбери режим:", reply_markup=kb.l_kb)
+            db.set_args(message.from_user['id'], 3, message_info['message_id'])
 
 @dp.message_handler(content_types=['text'])
 async def all_mess(message):
+    if db.status_get(message.from_user['id']) == 39:
+        var = ("асуждаю", "осуждаю", "Асуждаю", "Осуждаю","асуждаю!", "осуждаю!", "Асуждаю!", "Осуждаю!")
+        if message.text in var:
+            await bot.send_message(message.from_user['id'], 'СЕБЯ ОСУДИ!')
+        if message.text == '39':
+            await bot.send_message(message.from_user['id'], 'а ты я смотрю шаришь, или просто угадал. Разрешаю писать /rename (новое имя)')
+            db.set_args(message.from_user['id'], 2, 1)
+
     if db.status_get(message.from_user['id']) == 1:
         try:
             it = int(message.text)
@@ -198,6 +279,7 @@ async def all_mess(message):
 
                 f = open(str(message.from_user['id']) + '.jpg', "rb")
                 await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
+                await bot.delete_message(message.from_user['id'], int(db.get_args(message.from_user['id'])[3]))
                 await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
                 db.obr_set(message.from_user['id'], 1)
                 os.remove(str(message.from_user['id']) + '.jpg')
@@ -214,6 +296,7 @@ async def all_mess(message):
         f = open(str(message.from_user['id']) + '.jpg', "rb")
         await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
         os.remove(str(message.from_user['id']) + '.jpg')
+        await bot.delete_message(message.from_user['id'], int(db.get_args(message.from_user['id'])[3]))
         await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(message.from_user['id'], 1)
 
@@ -224,6 +307,7 @@ async def all_mess(message):
             f = open(str(message.from_user['id']) + '.jpg', "rb")
             await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
             os.remove(str(message.from_user['id']) + '.jpg')
+            await bot.delete_message(message.from_user['id'], int(db.get_args(message.from_user['id'])[3]))
             await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
             db.obr_set(message.from_user['id'], 1)
 
@@ -244,9 +328,9 @@ async def all_mess(message):
         f = open(str(message.from_user['id']) + '.jpg', "rb")
         await Bot.send_photo(self=bot, chat_id=message.from_user['id'], photo=f)
         os.remove(str(message.from_user['id']) + '.jpg')
+        await bot.delete_message(message.from_user['id'], int(db.get_args(message.from_user['id'])[3]))
         await bot.send_message(message.from_user['id'], 'ну как?', reply_markup=kb.greet_kb)
         db.obr_set(message.from_user['id'], 1)
-
 
 if __name__ == '__main__':
     mode = 0

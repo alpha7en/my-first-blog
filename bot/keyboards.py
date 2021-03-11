@@ -20,8 +20,11 @@ l3= InlineKeyboardButton("пикселизация", callback_data='l3')
 l4= InlineKeyboardButton("trigered", callback_data='l4')
 l5= InlineKeyboardButton("2 строки", callback_data='l5')
 l6= InlineKeyboardButton("moshu", callback_data='l6')
+l7= InlineKeyboardButton("искажение 😂", callback_data='l7')
+l8= InlineKeyboardButton("наложение", callback_data='l8')
+l9= InlineKeyboardButton("сжатие", callback_data='l9')
 
-l_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(l1,l3).add(l2).add(l4).add(l5, l6)
+l_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(l1,l3).add(l2).add(l4).add(l5, l6).add(l7).add(l8, l9)
 
 
 
@@ -30,3 +33,7 @@ m2= InlineKeyboardButton("справа", callback_data='m2')
 
 moshu_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(m1,m2)
 
+q1= InlineKeyboardButton("высокий", callback_data='q1')
+q2= InlineKeyboardButton("широкий", callback_data='q2')
+
+szg_kb = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=2).add(q1,q2)

@@ -27,6 +27,12 @@ class Sqlitecontrol:
         with self.connection:
             return self.cursor.execute("INSERT INTO `users` (`tg_id`, `name`) VALUES(?,?)", (tg_id, name))
 
+    def set_name(self, tg_id, name):
+        with self.connection:
+            self.cursor.execute("""UPDATE 'users' SET name = ? WHERE tg_id = ?""", (name, tg_id))
+
+
+
     def obr_set(self, tg_id, status):
         with self.connection:
             self.cursor.execute("""UPDATE 'users' SET obr = ? WHERE tg_id = ?""", (status, tg_id))
